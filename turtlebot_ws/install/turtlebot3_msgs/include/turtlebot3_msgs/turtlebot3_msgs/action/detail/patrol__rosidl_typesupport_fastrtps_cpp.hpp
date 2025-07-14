@@ -1,0 +1,1 @@
+/home/user/hand_gesture_robot/turtlebot_ws/build/turtlebot3_msgs/rosidl_typesupport_fastrtps_cpp/turtlebot3_msgs/action/detail/patrol__rosidl_typesupport_fastrtps_cpp.hpp

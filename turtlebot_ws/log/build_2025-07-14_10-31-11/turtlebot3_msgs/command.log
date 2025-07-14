@@ -1,0 +1,4 @@
+Invoking command in '/home/user/hand_gesture_robot/turtlebot_ws/build/turtlebot3_msgs': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake --build /home/user/hand_gesture_robot/turtlebot_ws/build/turtlebot3_msgs -- -j16 -l16
+Invoked command in '/home/user/hand_gesture_robot/turtlebot_ws/build/turtlebot3_msgs' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake --build /home/user/hand_gesture_robot/turtlebot_ws/build/turtlebot3_msgs -- -j16 -l16
+Invoking command in '/home/user/hand_gesture_robot/turtlebot_ws/build/turtlebot3_msgs': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake --install /home/user/hand_gesture_robot/turtlebot_ws/build/turtlebot3_msgs
+Invoked command in '/home/user/hand_gesture_robot/turtlebot_ws/build/turtlebot3_msgs' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake --install /home/user/hand_gesture_robot/turtlebot_ws/build/turtlebot3_msgs

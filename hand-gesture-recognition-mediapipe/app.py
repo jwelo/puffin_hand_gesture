@@ -13,7 +13,10 @@ import mediapipe as mp
 
 from utils import CvFpsCalc
 from model import KeyPointClassifier
-from model import PointHistoryClassifier
+# from model import PointHistoryClassifier
+
+import rclpy
+from motion_ros import MoveBot
 
 
 def get_args():
@@ -22,7 +25,7 @@ def get_args():
     # parser.add_argument("--device", type=int, default=0)
     parser.add_argument("--width", help='cap width', type=int, default=960)
     parser.add_argument("--height", help='cap height', type=int, default=540)
-    parser.add_argument('--url', default='http://192.168.1.168:8080/video',
+    parser.add_argument('--url', default='http://10.10.9.70:8080/video',
                         help='URL of the webcam stream server')
 
     parser.add_argument('--use_static_image_mode', action='store_true')
@@ -40,7 +43,29 @@ def get_args():
     return args
 
 
+
+
 def main():
+
+    rclpy.init()
+    move_bot = MoveBot()
+
+    ACTION_MAP = {
+    'STOP (Close Fist)':       {'linear_x': 0.0,   'angular_z': 0.0},
+
+    'FORWARD (Thumb up)':      {'linear_x': 0.11,  'angular_z': 0.0},
+    'MAX FORWARD (4 fingers up)': {'linear_x': 0.22,  'angular_z': 0.0},
+
+    'TURN LEFT (Thumb left)':  {'linear_x': 0.0,  'angular_z': 0.5},
+    'TURN RIGHT (Thumb right)':{'linear_x': 0.0,  'angular_z': -0.5},
+
+    'MAX LEFT (4 fingers left)':  {'linear_x': 0.0,  'angular_z': 1.0},
+    'MAX RIGHT (4 fingers right)':{'linear_x': 0.0,  'angular_z': -1.0}
+    }
+
+
+
+
     # Argument parsing #################################################################
     args = get_args()
 
@@ -71,7 +96,7 @@ def main():
 
     keypoint_classifier = KeyPointClassifier()
 
-    point_history_classifier = PointHistoryClassifier()
+    # point_history_classifier = PointHistoryClassifier()
 
     # Read labels ###########################################################
     with open('model/keypoint_classifier/keypoint_classifier_label.csv',
@@ -80,13 +105,13 @@ def main():
         keypoint_classifier_labels = [
             row[0] for row in keypoint_classifier_labels
         ]
-    with open(
-            'model/point_history_classifier/point_history_classifier_label.csv',
-            encoding='utf-8-sig') as f:
-        point_history_classifier_labels = csv.reader(f)
-        point_history_classifier_labels = [
-            row[0] for row in point_history_classifier_labels
-        ]
+    # with open(
+    #         'model/point_history_classifier/point_history_classifier_label.csv',
+    #         encoding='utf-8-sig') as f:
+    #     point_history_classifier_labels = csv.reader(f)
+    #     point_history_classifier_labels = [
+    #         row[0] for row in point_history_classifier_labels
+    #     ]
 
     # FPS Measurement ########################################################
     cvFpsCalc = CvFpsCalc(buffer_len=10)
@@ -96,7 +121,7 @@ def main():
     point_history = deque(maxlen=history_length)
 
     # Finger gesture history ################################################
-    finger_gesture_history = deque(maxlen=history_length)
+    # finger_gesture_history = deque(maxlen=history_length)
 
     #  ########################################################################
     mode = 0
@@ -148,18 +173,30 @@ def main():
                     point_history.append(landmark_list[8])
                 else:
                     point_history.append([0, 0])
+                gesture_label = keypoint_classifier_labels[hand_sign_id]
+                # print(f"Detected gesture: {gesture_label}")
+                move_bot.get_logger().info(f"Detected gesture: {gesture_label}")
 
-                # Finger gesture classification
-                finger_gesture_id = 0
-                point_history_len = len(pre_processed_point_history_list)
-                if point_history_len == (history_length * 2):
-                    finger_gesture_id = point_history_classifier(
-                        pre_processed_point_history_list)
+                # Check if gesture is mapped
+                if gesture_label in ACTION_MAP:
+                    cmd = ACTION_MAP[gesture_label]
+                    if cmd['linear_x'] == 0.0 and cmd['angular_z'] == 0.0:
+                        move_bot.stop()
+                    else:
+                        move_bot.set_move(linear_x=cmd['linear_x'], angular_z=cmd['angular_z'])
 
-                # Calculates the gesture IDs in the latest detection
-                finger_gesture_history.append(finger_gesture_id)
-                most_common_fg_id = Counter(
-                    finger_gesture_history).most_common()
+
+                # # Finger gesture classification
+                # finger_gesture_id = 0
+                # point_history_len = len(pre_processed_point_history_list)
+                # if point_history_len == (history_length * 2):
+                #     finger_gesture_id = point_history_classifier(
+                #         pre_processed_point_history_list)
+
+                # # Calculates the gesture IDs in the latest detection
+                # finger_gesture_history.append(finger_gesture_id)
+                # most_common_fg_id = Counter(
+                #     finger_gesture_history).most_common()
 
                 # Drawing part
                 debug_image = draw_bounding_rect(use_brect, debug_image, brect)
@@ -169,15 +206,18 @@ def main():
                     brect,
                     handedness,
                     keypoint_classifier_labels[hand_sign_id],
-                    point_history_classifier_labels[most_common_fg_id[0][0]],
+                    # point_history_classifier_labels[most_common_fg_id[0][0]],
                 )
+
+
         else:
             point_history.append([0, 0])
 
         debug_image = draw_point_history(debug_image, point_history)
         debug_image = draw_info(debug_image, fps, mode, number)
 
-        # Screen reflection #############################################################
+        # Screen reflection #############################################################\
+        rclpy.spin_once(move_bot, timeout_sec=0.01)
         cv.imshow('Hand Gesture Recognition', debug_image)
 
     cap.release()
@@ -494,8 +534,9 @@ def draw_bounding_rect(use_brect, image, brect):
     return image
 
 
-def draw_info_text(image, brect, handedness, hand_sign_text,
-                   finger_gesture_text):
+# def draw_info_text(image, brect, handedness, hand_sign_text,
+#                    finger_gesture_text):
+def draw_info_text(image, brect, handedness, hand_sign_text):
     cv.rectangle(image, (brect[0], brect[1]), (brect[2], brect[1] - 22),
                  (0, 0, 0), -1)
 
@@ -505,12 +546,12 @@ def draw_info_text(image, brect, handedness, hand_sign_text,
     cv.putText(image, info_text, (brect[0] + 5, brect[1] - 4),
                cv.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 1, cv.LINE_AA)
 
-    if finger_gesture_text != "":
-        cv.putText(image, "Finger Gesture:" + finger_gesture_text, (10, 60),
-                   cv.FONT_HERSHEY_SIMPLEX, 1.0, (0, 0, 0), 4, cv.LINE_AA)
-        cv.putText(image, "Finger Gesture:" + finger_gesture_text, (10, 60),
-                   cv.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255), 2,
-                   cv.LINE_AA)
+    # if finger_gesture_text != "":
+    #     cv.putText(image, "Finger Gesture:" + finger_gesture_text, (10, 60),
+    #                cv.FONT_HERSHEY_SIMPLEX, 1.0, (0, 0, 0), 4, cv.LINE_AA)
+    #     cv.putText(image, "Finger Gesture:" + finger_gesture_text, (10, 60),
+    #                cv.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255), 2,
+    #                cv.LINE_AA)
 
     return image
 

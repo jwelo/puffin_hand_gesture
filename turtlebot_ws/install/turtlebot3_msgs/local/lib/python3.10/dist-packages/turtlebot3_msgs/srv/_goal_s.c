@@ -1,0 +1,1 @@
+/home/user/hand_gesture_robot/turtlebot_ws/build/turtlebot3_msgs/rosidl_generator_py/turtlebot3_msgs/srv/_goal_s.c

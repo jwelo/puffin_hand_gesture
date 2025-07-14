@@ -1,0 +1,1 @@
+/home/user/hand_gesture_robot/turtlebot_ws/build/turtlebot3_msgs/ament_cmake_core/turtlebot3_msgsConfig.cmake

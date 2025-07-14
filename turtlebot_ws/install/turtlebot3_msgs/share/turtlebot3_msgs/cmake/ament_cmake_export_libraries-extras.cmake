@@ -1,0 +1,1 @@
+/home/user/hand_gesture_robot/turtlebot_ws/build/turtlebot3_msgs/ament_cmake_export_libraries/ament_cmake_export_libraries-extras.cmake

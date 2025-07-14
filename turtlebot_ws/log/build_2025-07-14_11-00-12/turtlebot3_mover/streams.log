@@ -1,0 +1,37 @@
+[0.755s] Invoking command in '/home/user/hand_gesture_robot/turtlebot_ws/src/turtlebot3_mover': PYTHONPATH=/home/user/hand_gesture_robot/turtlebot_ws/build/turtlebot3_mover/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/user/hand_gesture_robot/turtlebot_ws/install/turtlebot3_mover/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/turtlebot3_mover build --build-base /home/user/hand_gesture_robot/turtlebot_ws/build/turtlebot3_mover/build install --record /home/user/hand_gesture_robot/turtlebot_ws/build/turtlebot3_mover/install.log --single-version-externally-managed install_data
+[0.956s] running egg_info
+[0.956s] creating ../../build/turtlebot3_mover/turtlebot3_mover.egg-info
+[0.956s] writing ../../build/turtlebot3_mover/turtlebot3_mover.egg-info/PKG-INFO
+[0.957s] writing dependency_links to ../../build/turtlebot3_mover/turtlebot3_mover.egg-info/dependency_links.txt
+[0.957s] writing entry points to ../../build/turtlebot3_mover/turtlebot3_mover.egg-info/entry_points.txt
+[0.957s] writing requirements to ../../build/turtlebot3_mover/turtlebot3_mover.egg-info/requires.txt
+[0.957s] writing top-level names to ../../build/turtlebot3_mover/turtlebot3_mover.egg-info/top_level.txt
+[0.957s] writing manifest file '../../build/turtlebot3_mover/turtlebot3_mover.egg-info/SOURCES.txt'
+[0.958s] reading manifest file '../../build/turtlebot3_mover/turtlebot3_mover.egg-info/SOURCES.txt'
+[0.959s] writing manifest file '../../build/turtlebot3_mover/turtlebot3_mover.egg-info/SOURCES.txt'
+[0.959s] running build
+[0.959s] running build_py
+[0.960s] creating /home/user/hand_gesture_robot/turtlebot_ws/build/turtlebot3_mover/build
+[0.960s] creating /home/user/hand_gesture_robot/turtlebot_ws/build/turtlebot3_mover/build/lib
+[0.960s] creating /home/user/hand_gesture_robot/turtlebot_ws/build/turtlebot3_mover/build/lib/turtlebot3_mover
+[0.960s] copying turtlebot3_mover/__init__.py -> /home/user/hand_gesture_robot/turtlebot_ws/build/turtlebot3_mover/build/lib/turtlebot3_mover
+[0.960s] copying turtlebot3_mover/move_bot.py -> /home/user/hand_gesture_robot/turtlebot_ws/build/turtlebot3_mover/build/lib/turtlebot3_mover
+[0.960s] running install
+[0.961s] running install_lib
+[0.961s] creating /home/user/hand_gesture_robot/turtlebot_ws/install/turtlebot3_mover/lib/python3.10/site-packages/turtlebot3_mover
+[0.961s] copying /home/user/hand_gesture_robot/turtlebot_ws/build/turtlebot3_mover/build/lib/turtlebot3_mover/__init__.py -> /home/user/hand_gesture_robot/turtlebot_ws/install/turtlebot3_mover/lib/python3.10/site-packages/turtlebot3_mover
+[0.962s] copying /home/user/hand_gesture_robot/turtlebot_ws/build/turtlebot3_mover/build/lib/turtlebot3_mover/move_bot.py -> /home/user/hand_gesture_robot/turtlebot_ws/install/turtlebot3_mover/lib/python3.10/site-packages/turtlebot3_mover
+[0.962s] byte-compiling /home/user/hand_gesture_robot/turtlebot_ws/install/turtlebot3_mover/lib/python3.10/site-packages/turtlebot3_mover/__init__.py to __init__.cpython-310.pyc
+[0.962s] byte-compiling /home/user/hand_gesture_robot/turtlebot_ws/install/turtlebot3_mover/lib/python3.10/site-packages/turtlebot3_mover/move_bot.py to move_bot.cpython-310.pyc
+[0.963s] running install_data
+[0.963s] creating /home/user/hand_gesture_robot/turtlebot_ws/install/turtlebot3_mover/share/ament_index
+[0.963s] creating /home/user/hand_gesture_robot/turtlebot_ws/install/turtlebot3_mover/share/ament_index/resource_index
+[0.963s] creating /home/user/hand_gesture_robot/turtlebot_ws/install/turtlebot3_mover/share/ament_index/resource_index/packages
+[0.963s] copying resource/turtlebot3_mover -> /home/user/hand_gesture_robot/turtlebot_ws/install/turtlebot3_mover/share/ament_index/resource_index/packages
+[0.964s] copying package.xml -> /home/user/hand_gesture_robot/turtlebot_ws/install/turtlebot3_mover/share/turtlebot3_mover
+[0.964s] running install_egg_info
+[0.965s] Copying ../../build/turtlebot3_mover/turtlebot3_mover.egg-info to /home/user/hand_gesture_robot/turtlebot_ws/install/turtlebot3_mover/lib/python3.10/site-packages/turtlebot3_mover-0.0.0-py3.10.egg-info
+[0.966s] running install_scripts
+[0.981s] Installing move_bot script to /home/user/hand_gesture_robot/turtlebot_ws/install/turtlebot3_mover/lib/turtlebot3_mover
+[0.981s] writing list of installed files to '/home/user/hand_gesture_robot/turtlebot_ws/build/turtlebot3_mover/install.log'
+[1.005s] Invoked command in '/home/user/hand_gesture_robot/turtlebot_ws/src/turtlebot3_mover' returned '0': PYTHONPATH=/home/user/hand_gesture_robot/turtlebot_ws/build/turtlebot3_mover/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/user/hand_gesture_robot/turtlebot_ws/install/turtlebot3_mover/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/turtlebot3_mover build --build-base /home/user/hand_gesture_robot/turtlebot_ws/build/turtlebot3_mover/build install --record /home/user/hand_gesture_robot/turtlebot_ws/build/turtlebot3_mover/install.log --single-version-externally-managed install_data

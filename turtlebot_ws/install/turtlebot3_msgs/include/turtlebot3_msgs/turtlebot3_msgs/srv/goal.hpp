@@ -1,0 +1,1 @@
+/home/user/hand_gesture_robot/turtlebot_ws/build/turtlebot3_msgs/rosidl_generator_cpp/turtlebot3_msgs/srv/goal.hpp
