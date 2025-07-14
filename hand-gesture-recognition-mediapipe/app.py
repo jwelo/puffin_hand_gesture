@@ -17,6 +17,7 @@ from model import KeyPointClassifier
 
 import rclpy
 from motion_ros import MoveBot
+from rclpy.executors import MultiThreadedExecutor
 
 
 def get_args():
@@ -49,6 +50,8 @@ def main():
 
     rclpy.init()
     move_bot = MoveBot()
+    executor = MultiThreadedExecutor()
+    executor.add_node(move_bot)
 
     ACTION_MAP = {
     'STOP (Close Fist)':       {'linear_x': 0.0,   'angular_z': 0.0},
@@ -217,7 +220,7 @@ def main():
         debug_image = draw_info(debug_image, fps, mode, number)
 
         # Screen reflection #############################################################\
-        rclpy.spin_once(move_bot, timeout_sec=0.01)
+        executor.spin_once(timeout_sec=0.001)
         cv.imshow('Hand Gesture Recognition', debug_image)
 
     cap.release()
