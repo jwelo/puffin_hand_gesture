@@ -23,12 +23,15 @@ from rclpy.executors import MultiThreadedExecutor
 def get_args():
     parser = argparse.ArgumentParser()
 
-    # parser.add_argument("--device", type=int, default=0)
-    parser.add_argument("--width", help='cap width', type=int, default=960)
-    parser.add_argument("--height", help='cap height', type=int, default=540)
-    parser.add_argument('--url', default='http://10.10.9.70:8080/video',
+    parser.add_argument("--device", type=int, default=0)
+    parser.add_argument("--width", help='cap width', type=int, default=320) 
+    parser.add_argument("--height", help='cap height', type=int, default=240) 
+    parser.add_argument('--url', default='http://0.0.0.0:8080/video',
                         help='URL of the webcam stream server')
-
+    '''
+    parser.add_argument('--url', default='http://192.168.146.163:8080/video',
+                        help='URL of the webcam stream server')
+    '''
     parser.add_argument('--use_static_image_mode', action='store_true')
     parser.add_argument("--min_detection_confidence",
                         help='min_detection_confidence',
@@ -37,7 +40,7 @@ def get_args():
     parser.add_argument("--min_tracking_confidence",
                         help='min_tracking_confidence',
                         type=int,
-                        default=0.5)
+                        default=0.7)
 
     args = parser.parse_args()
 
@@ -54,10 +57,20 @@ def main():
     executor.add_node(move_bot)
 
     ACTION_MAP = {
+    'STOP (Open Palm)':       {'linear_x': 0.0,   'angular_z': 0.0},
+
+    'FORWARD (Two Finger Forward)':      {'linear_x': 0.11,  'angular_z': 0.0},
+    'BACKWARD (Two Finger Backward)': {'linear_x': -0.11,  'angular_z': 0.0},
+
+    'TURN LEFT (Two Finger Left)':  {'linear_x': 0.0,  'angular_z': 0.5},
+    'TURN RIGHT (Two Finger Right)':{'linear_x': 0.0,  'angular_z': -0.5},
+    }
+    ''' #Shengda's Action Map
+    ACTION_MAP = {
     'STOP (Close Fist)':       {'linear_x': 0.0,   'angular_z': 0.0},
 
     'FORWARD (Thumb up)':      {'linear_x': 0.11,  'angular_z': 0.0},
-    'MAX FORWARD (4 fingers up)': {'linear_x': 0.22,  'angular_z': 0.0},
+    'MAX FORWARD (4 fingers up)': {'linear_x': 0.21,  'angular_z': 0.0},
 
     'TURN LEFT (Thumb left)':  {'linear_x': 0.0,  'angular_z': 0.5},
     'TURN RIGHT (Thumb right)':{'linear_x': 0.0,  'angular_z': -0.5},
@@ -65,14 +78,14 @@ def main():
     'MAX LEFT (4 fingers left)':  {'linear_x': 0.0,  'angular_z': 1.0},
     'MAX RIGHT (4 fingers right)':{'linear_x': 0.0,  'angular_z': -1.0}
     }
-
+    '''
 
 
 
     # Argument parsing #################################################################
     args = get_args()
 
-    # cap_device = args.device
+    cap_device = args.device
     cap_width = args.width
     cap_height = args.height
 
@@ -83,15 +96,32 @@ def main():
     use_brect = True
 
     # Camera preparation ###############################################################
-    # cap = cv.VideoCapture(cap_device)
-    cap = cv.VideoCapture(args.url)
+    cap = cv.VideoCapture(cap_device, cv.CAP_V4L2)
+    # cap = cv.VideoCapture(args.url)
+    
+    # Check if camera opened successfully
+    if not cap.isOpened():
+        print(f"Error: Could not open camera device {cap_device}")
+        print("Trying without V4L2 backend...")
+        cap = cv.VideoCapture(cap_device)
+        if not cap.isOpened():
+            print("Error: Could not open camera with any backend")
+            return
+    
     cap.set(cv.CAP_PROP_FRAME_WIDTH, cap_width)
     cap.set(cv.CAP_PROP_FRAME_HEIGHT, cap_height)
+    cap.set(cv.CAP_PROP_FPS, 30)  # Set desired FPS
+    cap.set(cv.CAP_PROP_BUFFERSIZE, 1)  # Reduce buffer to avoid lag
+    
+    # Verify camera settings
+    actual_width = cap.get(cv.CAP_PROP_FRAME_WIDTH)
+    actual_height = cap.get(cv.CAP_PROP_FRAME_HEIGHT)
+    print(f"Camera opened: {actual_width}x{actual_height}")
 
     # Model load #############################################################
     mp_hands = mp.solutions.hands
     hands = mp_hands.Hands(
-        static_image_mode=use_static_image_mode,
+        static_image_mode=False,#use_static_image_mode,
         max_num_hands=1,
         min_detection_confidence=min_detection_confidence,
         min_tracking_confidence=min_tracking_confidence,
@@ -126,14 +156,21 @@ def main():
     # Finger gesture history ################################################
     # finger_gesture_history = deque(maxlen=history_length)
 
+    # Performance optimization variables
+    frame_skip = 0  # Process every frame for better responsiveness
+    process_every_n_frames = 1  # Process hand detection every 2 frames for better performance
+    results = None  # Store last detection results
+
     #  ########################################################################
     mode = 0
+    frame_count = 0
 
     while True:
         fps = cvFpsCalc.get()
+        frame_count += 1
 
         # Process Key (ESC: end) #################################################
-        key = cv.waitKey(10)
+        key = cv.waitKey(1)
         if key == 27:  # ESC
             break
         number, mode = select_mode(key, mode)
@@ -141,16 +178,23 @@ def main():
         # Camera capture #####################################################
         ret, image = cap.read()
         if not ret:
+            print("Error: Failed to read frame from camera")
             break
+        
+        # Skip frames for performance if needed
+        if frame_count % process_every_n_frames != 0:
+            continue
+            
         image = cv.flip(image, 1)  # Mirror display
         debug_image = copy.deepcopy(image)
 
         # Detection implementation #############################################################
-        image = cv.cvtColor(image, cv.COLOR_BGR2RGB)
-
-        image.flags.writeable = False
-        results = hands.process(image)
-        image.flags.writeable = True
+        # Only process hand detection every few frames for performance
+        if frame_count % process_every_n_frames == 0:
+            image_rgb = cv.cvtColor(image, cv.COLOR_BGR2RGB)
+            image_rgb.flags.writeable = False
+            results = hands.process(image_rgb)
+            image_rgb.flags.writeable = True
 
         #  ####################################################################
         if results.multi_hand_landmarks is not None:
@@ -225,6 +269,10 @@ def main():
 
     cap.release()
     cv.destroyAllWindows()
+    
+    # Cleanup ROS2
+    move_bot.destroy_node()
+    rclpy.shutdown()
 
 
 def select_mode(key, mode):
