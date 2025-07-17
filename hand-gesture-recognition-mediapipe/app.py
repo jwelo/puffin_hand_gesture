@@ -65,21 +65,6 @@ def main():
     'TURN LEFT (Two Finger Left)':  {'linear_x': 0.0,  'angular_z': 0.5},
     'TURN RIGHT (Two Finger Right)':{'linear_x': 0.0,  'angular_z': -0.5},
     }
-    ''' #Shengda's Action Map
-    ACTION_MAP = {
-    'STOP (Close Fist)':       {'linear_x': 0.0,   'angular_z': 0.0},
-
-    'FORWARD (Thumb up)':      {'linear_x': 0.11,  'angular_z': 0.0},
-    'MAX FORWARD (4 fingers up)': {'linear_x': 0.21,  'angular_z': 0.0},
-
-    'TURN LEFT (Thumb left)':  {'linear_x': 0.0,  'angular_z': 0.5},
-    'TURN RIGHT (Thumb right)':{'linear_x': 0.0,  'angular_z': -0.5},
-
-    'MAX LEFT (4 fingers left)':  {'linear_x': 0.0,  'angular_z': 1.0},
-    'MAX RIGHT (4 fingers right)':{'linear_x': 0.0,  'angular_z': -1.0}
-    }
-    '''
-
 
 
     # Argument parsing #################################################################

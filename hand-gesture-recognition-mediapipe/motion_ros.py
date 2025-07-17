@@ -5,7 +5,7 @@ from geometry_msgs.msg import Twist
 class MoveBot(Node):
     def __init__(self):
         super().__init__('move_bot')
-        self.publisher_ = self.create_publisher(Twist, '/cmd_vel', 10)
+        self.publisher_ = self.create_publisher(Twist, '/cmd_hand', 10)
         self.timer = self.create_timer(0.1, self.publish_command)
         self.move_cmd = Twist()
         self.active = False  # Only publish when gesture detected
