@@ -218,6 +218,7 @@ def main():
                         move_bot.set_move(linear_x=cmd['linear_x'], angular_z=cmd['angular_z'])
 
 
+
                 # # Finger gesture classification
                 # finger_gesture_id = 0
                 # point_history_len = len(pre_processed_point_history_list)
@@ -243,6 +244,7 @@ def main():
 
 
         else:
+            move_bot.active = False  # Stop publishing if gesture is not recognized
             point_history.append([0, 0])
 
         debug_image = draw_point_history(debug_image, point_history)
